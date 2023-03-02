@@ -13,7 +13,7 @@ echo "$JOB_ID_PREFIX"
 
 echo -e "${GREEN}Benchmarking Project: ${PROJECT}"
 
-echo -e "${GREEN}Running Warmup Scripts - Starting"
+#echo -e "${GREEN}Running Warmup Scripts - Starting"
 
 # Warm-up
 #find warmup/ -name warmup_*.sql | sort -V | {
@@ -27,7 +27,7 @@ echo -e "${GREEN}Running Warmup Scripts - Starting"
 #  done
 #}
 
-echo -e "${GREEN}Running Warmup Scripts - Complete"
+#echo -e "${GREEN}Running Warmup Scripts - Complete"
 
 # Test
 mkdir -p results
@@ -49,7 +49,8 @@ find query/ -name query*.sql | sort -V | {
     --batch=false \
     --maximum_billing_tier=10 \
     --job_id="$ID" \
-    --format=none
+    --format=none \
+    --nouse-cache
 
 
     JOB=$(bq --format=json show -j "$JOB_ID_PREFIX"."${ID}")
