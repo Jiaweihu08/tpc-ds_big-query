@@ -16,16 +16,16 @@ echo -e "${GREEN}Benchmarking Project: ${PROJECT}"
 echo -e "${GREEN}Running Warmup Scripts - Starting"
 
 # Warm-up
-find warmup/ -name warmup_*.sql | sort -V | {
-  while read line; do
-    echo "$line"
-    cat "$line" | bq --dataset_id=${PROJECT} \
-      query \
-      --use_legacy_sql=false \
-      --batch=false \
-      --format=none
-  done
-}
+#find warmup/ -name warmup_*.sql | sort -V | {
+#  while read line; do
+#    echo "$line"
+#    cat "$line" | bq --dataset_id=${PROJECT} \
+#      query \
+#      --use_legacy_sql=false \
+#      --batch=false \
+#      --format=none
+#  done
+#}
 
 echo -e "${GREEN}Running Warmup Scripts - Complete"
 
