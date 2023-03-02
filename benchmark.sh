@@ -5,7 +5,8 @@ GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 
-PROJECT=scale_$1
+PROJECT=$1
+JOB_ID_PREFIX=$2  #qbeast-iceberg-integration:europe-southwest1
 
 echo -e "${GREEN}Benchmarking Project: ${PROJECT}"
 
@@ -33,29 +34,30 @@ echo -e "${GREEN}Running Benchmark Scripts - Starting"
 
 find query/ -name query*.sql | sort -V | {
   while read -r f; do
-    echo $f
-    QUERY=`basename $f | head -c -5`
+    echo "$f"
+    QUERY=$(basename "$f" | head -c -5)
     ID=${QUERY}_$(date +%s)
 
-    cat "$f" \
-      | bq \
-        --dataset_id=${PROJECT} \
-        query \
-        --use_legacy_sql=false \
-        --batch=false \
-        --maximum_billing_tier=10 \
-        --job_id=$ID \
-        --format=none
 
-    JOB=$(bq --format=json show -j ${ID})
+    cat "$f" | bq \
+    --dataset_id="$PROJECT" \
+    query \
+    --use_legacy_sql=false \
+    --batch=false \
+    --maximum_billing_tier=10 \
+    --job_id="$ID" \
+    --format=none
 
-    echo $JOB >> results/${ID}-stat.json
 
-    STARTED=$(echo $JOB | jq .statistics.startTime)
-    ENDED=$(echo $JOB | jq .statistics.endTime)
+    JOB=$(bq --format=json show -j "$JOB_ID_PREFIX"."${ID}")
 
-    BILLING_TIER=$(echo $JOB | jq .statistics.query.billingTier)
-    BYTES=$(echo $JOB | jq .statistics.query.totalBytesBilled)
+    echo "$JOB" >> results/"$ID"-stat.json
+
+    STARTED=$(echo "$JOB" | jq .statistics.startTime)
+    ENDED=$(echo "$JOB" | jq .statistics.endTime)
+
+    BILLING_TIER=$(echo "$JOB" | jq .statistics.query.billingTier)
+    BYTES=$(echo "$JOB" | jq .statistics.query.totalBytesBilled)
 
 
     echo "$f,$STARTED,$ENDED,$BILLING_TIER,$BYTES" >> results/BigQueryResults.csv
