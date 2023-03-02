@@ -50,7 +50,7 @@ find query/ -name query*.sql | sort -V | {
     --maximum_billing_tier=10 \
     --job_id="$ID" \
     --format=none \
-    --nouse-cache
+    --nouse_cache
 
 
     JOB=$(bq --format=json show -j "$JOB_ID_PREFIX"."${ID}")
