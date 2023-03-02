@@ -8,6 +8,9 @@ NC='\033[0m' # No Color
 PROJECT=$1
 JOB_ID_PREFIX=$2  #qbeast-iceberg-integration:europe-southwest1
 
+echo "$PROJECT"
+echo "$JOB_ID_PREFIX"
+
 echo -e "${GREEN}Benchmarking Project: ${PROJECT}"
 
 echo -e "${GREEN}Running Warmup Scripts - Starting"
@@ -28,7 +31,7 @@ echo -e "${GREEN}Running Warmup Scripts - Complete"
 
 # Test
 mkdir -p results
-echo "Query,Started,Ended,Billing Tier,Bytes" > results/BigQueryResults.csv
+echo "Query,Started,Ended,Billing Tier,Bytes,Total_slot_timeMs" > results/BigQueryResults.csv
 
 echo -e "${GREEN}Running Benchmark Scripts - Starting"
 
@@ -58,9 +61,10 @@ find query/ -name query*.sql | sort -V | {
 
     BILLING_TIER=$(echo "$JOB" | jq .statistics.query.billingTier)
     BYTES=$(echo "$JOB" | jq .statistics.query.totalBytesBilled)
+    TOTAL_SLOT_TIME=$(echo "$JOB" | jq .statistics.totalSlotMs)
 
-
-    echo "$f,$STARTED,$ENDED,$BILLING_TIER,$BYTES" >> results/BigQueryResults.csv
+    echo "$f,$STARTED,$ENDED,$BILLING_TIER,$BYTES,$TOTAL_SLOT_TIME"
+    echo "$f,$STARTED,$ENDED,$BILLING_TIER,$BYTES,$TOTAL_SLOT_TIME" >> results/BigQueryResults.csv
   done
 }
 
